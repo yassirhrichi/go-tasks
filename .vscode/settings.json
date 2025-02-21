@@ -1,0 +1,6 @@
+{
+    "http.proxySupport": "on",
+    "http.proxy": "http://webproxy.dgi.ma:8080",
+    "http.proxtStrictSSL": "false",
+    "http.proxyAuthorization": null
+}
