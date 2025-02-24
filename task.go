@@ -2,9 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
-	"strings"
 )
 
 // TODO : Test `json : "id"` behaviore
@@ -22,29 +20,40 @@ func main() {
 	if command != "task" {
 		return
 	}
-	data, err := os.ReadFile("tasks.json")
-	check(err)
-	dec := json.NewDecoder(strings.NewReader(string(data)))
+
 	var tasks []task
-	dec.Decode(&tasks)
-	fmt.Print(tasks)
 
-	// operation := os.Args[2]
-	// switch operation {
-	// case "add":
-	// 	task_description := os.Args[3]
-	// 	new_task := task{
-	// 		Id:          1,
-	// 		Description: task_description,
-	// 	}
-	// 	fmt.Println(new_task)
+	file, err := os.OpenFile("tasks.json", os.O_RDWR|os.O_CREATE, 0644)
+	check(err)
+	defer file.Close()
 
-	// 	str_task, err := json.Marshal(new_task)
-	// 	check(err)
-	// 	// err2 := os.WriteFile("tasks.json", str_task, 0644)
-	// 	// check(err2)
-	// 	fmt.Println(string(str_task))
-	// }
+	dec := json.NewDecoder(file)
+	enc := json.NewEncoder(file)
+
+	err = dec.Decode(&tasks)
+	if err != nil && err.Error() != "EOF" {
+		panic(err)
+	}
+
+	operation := os.Args[2]
+	switch operation {
+	case "add":
+		task_description := os.Args[3]
+		new_task := task{
+			Id:          len(tasks) + 1,
+			Description: task_description,
+		}
+		tasks = append(tasks, new_task)
+
+	case "update":
+		//	updated_task_id :=int(os.Args[3])
+	}
+
+	err = file.Truncate(0)
+	check(err)
+	file.Seek(0, 0)
+	err = enc.Encode(tasks)
+	check(err)
 }
 
 func check(e error) {
