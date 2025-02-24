@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 // TODO : Test `json : "id"` behaviore
@@ -17,21 +18,39 @@ type task struct {
 
 func main() {
 	command := os.Args[1]
+
 	if command != "task" {
 		return
 	}
-	operation := os.Args[2]
-	switch operation {
-	case "add":
-		task_description := os.Args[3]
-		new_task := task{
-			Id:          1,
-			Description: task_description,
-		}
-		str_task, _ := json.Marshal(new_task)
-		fmt.Println(string(str_task))
-	}
+	data, err := os.ReadFile("tasks.json")
+	check(err)
+	dec := json.NewDecoder(strings.NewReader(string(data)))
+	var tasks []task
+	dec.Decode(&tasks)
+	fmt.Print(tasks)
 
+	// operation := os.Args[2]
+	// switch operation {
+	// case "add":
+	// 	task_description := os.Args[3]
+	// 	new_task := task{
+	// 		Id:          1,
+	// 		Description: task_description,
+	// 	}
+	// 	fmt.Println(new_task)
+
+	// 	str_task, err := json.Marshal(new_task)
+	// 	check(err)
+	// 	// err2 := os.WriteFile("tasks.json", str_task, 0644)
+	// 	// check(err2)
+	// 	fmt.Println(string(str_task))
+	// }
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
 }
 
 // case "update":
