@@ -40,13 +40,15 @@ func main() {
 	case "add":
 		task_description := os.Args[3]
 		new_task := task{
-			Id:          len(tasks) + 1,
+			Id:          tasks[len(tasks)-1].Id + 1,
 			Description: task_description,
 		}
 		tasks = append(tasks, new_task)
 
 	case "update":
-		//	updated_task_id :=int(os.Args[3])
+		//updated_task_id, err := strconv.Atoi(os.Args[3])
+		//check(err)
+		//tasks[updated_task_id]
 	}
 
 	err = file.Truncate(0)
@@ -55,6 +57,8 @@ func main() {
 	err = enc.Encode(tasks)
 	check(err)
 }
+
+//func getTaskById()
 
 func check(e error) {
 	if e != nil {
