@@ -1,1 +1,9 @@
-[{"id":1,"description":"final test","status":"todo","created_at":"2025-02-26T09:40:36.6148845Z","updated_at":"2025-02-26T09:40:36.6148845Z"}]
+[
+  {
+    "id": 1,
+    "title": "test cli app",
+    "status": "todo",
+    "created_at": "2025-02-26T22:32:49.6174315Z",
+    "updated_at": "2025-02-26T22:32:49.6174315Z"
+  }
+]
