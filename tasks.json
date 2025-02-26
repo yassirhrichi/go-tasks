@@ -1,4 +1,1 @@
-[
-  { "id": 1, "description": "first task" },
-  { "id": 2, "description": "second task" }
-]
+[{"id":1,"description":"Do a todo cli","status":"todo"},{"id":3,"description":"Testing the delete feature","status":"todo"},{"id":4,"description":"Testing the delete feature after deleting from middle","status":"todo"}]

@@ -6,21 +6,23 @@ import (
 	"os"
 	"slices"
 	"strconv"
+	"time"
 )
 
 // TODO : Test `json : "id"` behaviore
 type task struct {
-	Id          int    `json:"id"`
-	Description string `json:"description"`
-	Status      string `json:"status"`
-	// CreatedAt   time.Time `json:"created_at"`
-	// UpdatedAt   time.Time `json:"updated_at"`
+	Id          int       `json:"id"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 func main() {
 	args := os.Args
 	if len(args) < 3 {
 		fmt.Println("Wrong usage. For help use the command \"task help\"")
+		return
 	}
 
 	command := args[1]
@@ -47,59 +49,105 @@ func main() {
 	case "add":
 		if len(args) != 4 {
 			fmt.Println("Wrong usage. for the add command, use \"task add [descrition]\"")
+			return
 		}
-		task_description := os.Args[3]
-		new_task := task{
-			Id:          tasks[len(tasks)-1].Id + 1,
-			Description: task_description,
+		taskDescription := os.Args[3]
+		var taskId int
+		if len(tasks) == 0 {
+			taskId = 1
+		} else {
+			taskId = tasks[len(tasks)-1].Id + 1
+		}
+		newTask := task{
+			Id:          taskId,
+			Description: taskDescription,
 			Status:      "todo",
 		}
-		tasks = append(tasks, new_task)
+		tasks = append(tasks, newTask)
+		fmt.Println("Task added successfully!")
 	case "update":
 		if len(args) != 5 {
 			fmt.Println("Wrong usage. for the update command, use \"task update [id] [new_descrition]\"")
+			return
 		}
-		task_id, err := strconv.Atoi(args[3])
+		taskId, err := strconv.Atoi(args[3])
 		check(err)
-		upd_task_indx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == task_id })
-		upd_desc := args[4]
-		tasks[upd_task_indx].Description = upd_desc
+		upTaskIndx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == taskId })
+		upDesc := args[4]
+		tasks[upTaskIndx].Description = upDesc
+
+		fmt.Println("Task updated successfully!")
 	case "delete":
 		if len(args) != 4 {
 			fmt.Println("Wrong usage. for the add command, use \"task delete [id]\"")
+			return
 		}
-		task_id, err := strconv.Atoi(args[3])
+		taskId, err := strconv.Atoi(args[3])
 		check(err)
-		tasks = slices.DeleteFunc(tasks, func(t task) bool { return t.Id == task_id })
+		tasks = slices.DeleteFunc(tasks, func(t task) bool { return t.Id == taskId })
+		fmt.Println("Task deleted successfully!")
 
 	case "list":
 		if len(args) == 3 {
-			fmt.Println("Tasks list")
+			fmt.Println("Tasks list :")
 			for _, t := range tasks {
-				fmt.Println("Id : %V | Description : %V | Status : ", t.Id, t.Description, t.Status)
+				fmt.Printf("Id : %v | Description : %v | Status : %v \n", t.Id, t.Description, t.Status)
 			}
 		} else if len(args) == 4 {
-			// switch statement for the status
+			status := args[3]
+			switch status {
+			case "todo":
+				fmt.Println("The todo tasks list :")
+				for _, t := range tasks {
+					if t.Status == "todo" {
+						fmt.Printf("Id : %v | Description : %v\n", t.Id, t.Description)
+					}
+				}
+			case "in-progress":
+				fmt.Println("The in-progress tasks list :")
+				for _, t := range tasks {
+					if t.Status == "in-progress" {
+						fmt.Printf("Id : %v | Description : %v\n", t.Id, t.Description)
+					}
+				}
+			case "done":
+				fmt.Println("The done tasks list :")
+				for _, t := range tasks {
+					if t.Status == "done" {
+						fmt.Printf("Id : %v | Description : %v\n", t.Id, t.Description)
+					}
+				}
+			default:
+				fmt.Println("Wrong usage. for the list command, use \"task list [status] [id]\"")
+				return
+			}
+
 		} else {
 			fmt.Println("Wrong usage. for the list command, use \"task list [status]\"")
+			return
 		}
 
 	case "mark-in-progress":
 		if len(args) != 4 {
 			fmt.Println("Wrong usage. for the list command, use \"task mark-in-progress [id]\"")
+			return
 		}
-		task_id, err := strconv.Atoi(args[3])
+		taskId, err := strconv.Atoi(args[3])
 		check(err)
-		upd_task_indx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == task_id })
-		tasks[upd_task_indx].Status = "in-progress"
+		upTaskIndx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == taskId })
+		tasks[upTaskIndx].Status = "in-progress"
+		fmt.Println("Task' status updated successfully!")
+
 	case "mark-done":
 		if len(args) != 4 {
 			fmt.Println("Wrong usage. for the list command, use \"task mark-in-progress [id]\"")
+			return
 		}
-		task_id, err := strconv.Atoi(args[3])
+		taskId, err := strconv.Atoi(args[3])
 		check(err)
-		upd_task_indx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == task_id })
-		tasks[upd_task_indx].Status = "done"
+		upTaskIndx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == taskId })
+		tasks[upTaskIndx].Status = "done"
+		fmt.Println("Task' status updated successfully!")
 	}
 
 	err = file.Truncate(0)
