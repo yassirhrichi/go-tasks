@@ -18,6 +18,8 @@ type task struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+//To Format time layout must use the reference time Mon Jan 2 15:04:05 MST 2006. eg. Time.Now().Local().Format("02-01-2006 15:04:05")
+
 func main() {
 	args := os.Args
 	if len(args) < 3 {
@@ -62,6 +64,8 @@ func main() {
 			Id:          taskId,
 			Description: taskDescription,
 			Status:      "todo",
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
 		}
 		tasks = append(tasks, newTask)
 		fmt.Println("Task added successfully!")
@@ -75,6 +79,7 @@ func main() {
 		upTaskIndx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == taskId })
 		upDesc := args[4]
 		tasks[upTaskIndx].Description = upDesc
+		tasks[upTaskIndx].UpdatedAt = time.Now()
 
 		fmt.Println("Task updated successfully!")
 	case "delete":
@@ -136,6 +141,8 @@ func main() {
 		check(err)
 		upTaskIndx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == taskId })
 		tasks[upTaskIndx].Status = "in-progress"
+		tasks[upTaskIndx].UpdatedAt = time.Now()
+
 		fmt.Println("Task' status updated successfully!")
 
 	case "mark-done":
@@ -147,6 +154,8 @@ func main() {
 		check(err)
 		upTaskIndx := slices.IndexFunc(tasks, func(t task) bool { return t.Id == taskId })
 		tasks[upTaskIndx].Status = "done"
+		tasks[upTaskIndx].UpdatedAt = time.Now()
+
 		fmt.Println("Task' status updated successfully!")
 	}
 
